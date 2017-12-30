@@ -123,7 +123,7 @@ public class CurseCompare {
 		consoleLog("\nMods included by both " + names[0] + " and " + names[1] + ":");
 		for (Map.Entry<String, Integer> entry : mods.entrySet()) {
 			if (entry.getValue() == 3) {
-				output(convertString(entry.getKey()), 0);
+				output(unescapeHTML(entry.getKey()), 0);
 				num++;
 			}
 		}
@@ -133,7 +133,7 @@ public class CurseCompare {
 		consoleLog("\nMods included only by " + names[0] + ":");
 		for (Map.Entry<String, Integer> entry : mods.entrySet()) {
 			if (entry.getValue() == 1) {
-				output(convertString(entry.getKey()), 1);
+				output(unescapeHTML(entry.getKey()), 1);
 				num++;
 			}
 		}
@@ -143,7 +143,7 @@ public class CurseCompare {
 		consoleLog("\nMods included only by " + names[1] + ":");
 		for (Map.Entry<String, Integer> entry : mods.entrySet()) {
 			if (entry.getValue() == 2) {
-				output(convertString(entry.getKey()), 2);
+				output(unescapeHTML(entry.getKey()), 2);
 				num++;
 			}
 		}
@@ -155,24 +155,24 @@ public class CurseCompare {
 		consoleLog("\n");
 	}
 
-	private static String convertString(String s) {
+	private static String unescapeHTML(String s) {
 		StringBuilder sb = new StringBuilder(s);
 		while (sb.toString().contains("&#x")) {
-			int start = s.indexOf("&#x");
-			int end = s.indexOf(";");
-			String sub = s.substring(start + 3, end);
+			int start = sb.indexOf("&#x");
+			int end = sb.indexOf(";");
+			String sub = sb.substring(start + 3, end);
 			String converted = convertHexToString(sub);
 			sb.delete(start, end + 1);
 			sb.insert(start, converted);
 		}
 
-		while (sb.toString().contains("&amp;")) {
-			int start = s.indexOf("&amp;");
-			sb.delete(start, start + 5);
-			sb.insert(start, "&");
-		}
+		String converted = sb.toString();
+		converted = converted.replace("&amp;", "&");
+		converted = converted.replace("&quot;", "\"");
+		converted = converted.replace("&lt;", "<");
+		converted = converted.replace("&gt;", ">");
 
-		return sb.toString();
+		return converted;
 	}
 
 	private static String convertHexToString(String hex) {
